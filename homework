@@ -1,0 +1,89 @@
+import pygame
+from pygame.locals import*
+from time import*
+import random
+loss = 0
+points = 0
+
+def collision():
+    global points, loss, player_x, player_y, star_x, star_y
+    if player_x == star_x or player_y == star_y:
+        points += 1
+        loss = 0
+        screen.fill((0,0,0))
+        screen.blit(background,(0,0))
+        screen.blit(player,(player_x,player_y))
+
+pygame.init()
+screen =pygame.display.set_mode((600,600))
+player_x = 200
+player_y = 200
+keys = [False,False,False,False]
+player = pygame.image.load("rocket.png")
+background = pygame.image.load("spacebg.png")
+star1 = pygame.image.load("star.webp")
+star = pygame.transform.scale(star1, ((50,50)))
+while loss != 1:
+    loss += 0.05
+    star_x = random.randint(100,500)
+    star_y = random.randint(100,500)
+    star_spawn = random.randint(1,10)
+    screen.blit(background,(0,0))
+    screen.blit(player,(player_x,player_y))
+    if star_spawn == 5:
+        screen.blit(star,(star_x,star_y))
+    pygame.display.flip()
+    for event in pygame.event.get():
+        if event.type== pygame.QUIT:
+            #if it is quit event
+            pygame.quit()
+            exit(0)
+        #if any keyboard button is pressed
+        if event.type == pygame.KEYDOWN:
+            #Check which button was pressed
+            if event.key == K_UP:
+                keys[0] = True
+            elif event.key == K_DOWN:
+                keys[2] = True
+            elif event.key == K_LEFT:
+                keys[1] = True
+            elif event.key == K_RIGHT:
+                keys[3] = True
+        if event.type == pygame.KEYUP:
+            #check which button is released
+            if event.key == K_UP:
+                keys[0] = False
+            elif event.key == K_DOWN:
+                keys[2] = False
+            elif event.key == K_LEFT:
+                keys[1] = False
+            elif event.key == K_RIGHT:
+                keys[3] = False
+    #if up button is pressed
+    if keys[0]:
+        if player_y>0:
+            player_y -= 21
+            collision()
+
+        
+    #if down key is pressed
+    elif keys[2]:
+        if player_y<536:
+            player_y += 7
+            collision()
+    
+    #update x pos
+    #if left key is pressed
+    elif keys[1]:
+        if player_x > 0:
+            player_x -= 6
+            collision()
+    
+    #if the right key is pressed
+    elif keys[3]:
+        if player_x < 536:
+            player_x += 6
+            collision()
+    #update the rockets vertical position using its current speed
+    player_y += 15
+    sleep(0.05)
